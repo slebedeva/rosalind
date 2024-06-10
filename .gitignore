@@ -1,5 +1,7 @@
 # data folder
 data/
+# separate files for puzzles (have functions in the module instead)
+puzzles/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

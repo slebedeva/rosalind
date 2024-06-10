@@ -6,7 +6,9 @@ The functions are somewhat tailored to solving Rosalind problems but can be used
 Includes functions:
     is_valid:           Checks if a given string is a valid nucleic acid sequence.
     reverse_complement: Returns reverse complement of a DNA or RNA sequence.
+    hamming_distance:   Calculates Hamming distance (substitution only) between two sequences of equal length.
 """
+
 
 def is_valid(dna: str) -> bool:
     """
@@ -44,3 +46,29 @@ def reverse_complement(dna: str) -> str:
             {'G': 'C', 'C': 'G', 'A': 'T', 'T': 'A', 'U': 'A', 'g': 'c', 'c': 'g', 'a': 't', 't': 'a', 'u': 'a'})
     # reverse and complement
     return dna[::-1].translate(table)
+
+
+def hamming_distance(dna1: str, dna2: str) -> int:
+    """
+    Returns Hamming distance (the number of substitutions) between two DNA sequences of equal length.
+
+    DNA are strings of A,C,G and T. This function will in principle work on other strings as well.
+
+    The output is not case sensitive.
+
+    :param dna1:
+    :param dna2:
+    :return ham_dist:
+    """
+
+    # exception if the length is not the same
+    if len(dna1) != len(dna2):
+        raise ValueError('Length of the two sequences must be the same!')
+
+    ham_dist = 0
+
+    for i in range(len(dna1)):
+        if dna1[i].upper() != dna2[i].upper():
+            ham_dist += 1
+
+    return ham_dist
