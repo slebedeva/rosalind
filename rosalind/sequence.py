@@ -4,25 +4,18 @@ Utility functions to process nucleic acid sequences.
 The functions are tailored to solving Rosalind problems but can be used independently.
 
 Included functions:
-    is_valid:           Checks if a given string is a valid nucleic acid sequence.
-    reverse_complement: Returns reverse complement of a DNA or RNA sequence.
-    hamming_distance:   Calculates Hamming distance (substitution only) between two sequences of equal length.
-    find_motif:         Returns 1-based starts of all locations of a motif within given sequence (exact match).
+    is_valid:                   Checks if a given string is a valid nucleic acid sequence.
+    reverse_complement:         Returns reverse complement of a DNA or RNA sequence.
+    translate:                  Translates RNA sequence into protein using standard codon table.
+    hamming_distance:           Calculates Hamming distance (substitution only) between two sequences of equal length.
+    find_motif:                 Returns 1-based starts of all locations of a motif within given sequence (exact match).
+    all_common_substrings:      Return a set of all common substrings between two DNA strings.
+    longest_common_substring:   Returns one longest common substring between k DNA strings.
+
 """
 
 # import utility functions (like reading fasta)
-from .utils import read_multifasta
-
-
-def is_valid(dna: str) -> bool:
-    """
-    Checks if a string is a valid nucleic acid sequence (only A,T,G,C,U in any case).
-    Does not consider IUPAC code.
-
-    :param dna: DNA or RNA string.
-    :return: whether it consists only of A,T,G,C,U letters (lowercase allowed).
-    """
-    return set(dna.upper()) <= {'A', 'T', 'C', 'G', 'U'}
+from .utils import read_multifasta, is_valid
 
 
 def reverse_complement(dna: str) -> str:
@@ -51,6 +44,111 @@ def reverse_complement(dna: str) -> str:
     # reverse and complement
     return dna[::-1].translate(table)
 
+
+def translate(rna: str) -> str:
+    """
+    Given: An RNA string s corresponding to a strand of mRNA (of length at most 10 kbp).
+    If provided with DNA, it will transcribe into RNA before proceeding.
+
+    Return: The protein string encoded by s.
+
+    This function uses standard eukaryotic genetic code.
+
+    :param rna: RNA string.
+    :return: Protein sequence.
+    """
+
+    # check if sequence is valid
+    if not is_valid(rna):
+        return 'Please enter a valid DNA/RNA sequence (a,t,g,c,u allowed)'
+
+    # handle lower case
+    if not rna.isupper():
+        rna = rna.upper()
+    # transcribe DNA
+    if 'T' in rna:
+        rna = rna.replace('T', 'U')
+
+    # TODO option for mitochondrial/bacterial codon table
+    # genetic code table
+    codons = {'UUU': 'F',
+              'UUC': 'F',
+              'UUA': 'L',
+              'UUG': 'L',
+              'UCU': 'S',
+              'UCC': 'S',
+              'UCA': 'S',
+              'UCG': 'S',
+              'UAU': 'Y',
+              'UAC': 'Y',
+              'UAA': 'Stop',
+              'UAG': 'Stop',
+              'UGU': 'C',
+              'UGC': 'C',
+              'UGA': 'Stop',
+              'UGG': 'W',
+              'CUU': 'L',
+              'CUC': 'L',
+              'CUA': 'L',
+              'CUG': 'L',
+              'CCU': 'P',
+              'CCC': 'P',
+              'CCA': 'P',
+              'CCG': 'P',
+              'CAU': 'H',
+              'CAC': 'H',
+              'CAA': 'Q',
+              'CAG': 'Q',
+              'CGU': 'R',
+              'CGC': 'R',
+              'CGA': 'R',
+              'CGG': 'R',
+              'AUU': 'I',
+              'AUC': 'I',
+              'AUA': 'I',
+              'AUG': 'M',
+              'ACU': 'T',
+              'ACC': 'T',
+              'ACA': 'T',
+              'ACG': 'T',
+              'AAU': 'N',
+              'AAC': 'N',
+              'AAA': 'K',
+              'AAG': 'K',
+              'AGU': 'S',
+              'AGC': 'S',
+              'AGA': 'R',
+              'AGG': 'R',
+              'GUU': 'V',
+              'GUC': 'V',
+              'GUA': 'V',
+              'GUG': 'V',
+              'GCU': 'A',
+              'GCC': 'A',
+              'GCA': 'A',
+              'GCG': 'A',
+              'GAU': 'D',
+              'GAC': 'D',
+              'GAA': 'E',
+              'GAG': 'E',
+              'GGU': 'G',
+              'GGC': 'G',
+              'GGA': 'G',
+              'GGG': 'G'}
+
+    # produce protein stopping at the first stop
+
+    protein = ''
+    for i in range(0, len(rna), 3):
+        aa = codons[rna[i:i + 3]]
+        if aa == "Stop":
+            return protein
+        protein += aa
+    return protein
+
+###############################################################################################
+# Functions to compare two sequences
+###############################################################################################
 
 def hamming_distance(dna1: str, dna2: str) -> int:
     """

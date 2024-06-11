@@ -22,3 +22,14 @@ def read_multifasta(fasta_path):
                     print('your fasta seems to be corrupt')
 
     return sequences
+
+
+def is_valid(dna: str) -> bool:
+    """
+    Checks if a string is a valid nucleic acid sequence (only A,T,G,C,U in any case).
+    Does not consider IUPAC code.
+
+    :param dna: DNA or RNA string.
+    :return: whether it consists only of A,T,G,C,U letters (lowercase allowed).
+    """
+    return set(dna.upper()) <= {'A', 'T', 'C', 'G', 'U'}
