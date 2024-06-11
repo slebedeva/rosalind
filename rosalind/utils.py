@@ -1,3 +1,12 @@
+"""
+Auxiliary functions which are used in rosalind.sequence module.
+
+Includes functions:
+    read_multifasta:            Reads multi-line multi-sequence fasta file into a dictionary like so: {name:sequence}.
+    is_valid:                   Checks if a given string is a valid nucleic acid sequence.
+    gc:                         Calculates GC% of a DNA/RNA sequence.
+
+"""
 def read_multifasta(fasta_path):
     """
     A function to import multiline fasta into a dictionary.
@@ -33,3 +42,17 @@ def is_valid(dna: str) -> bool:
     :return: whether it consists only of A,T,G,C,U letters (lowercase allowed).
     """
     return set(dna.upper()) <= {'A', 'T', 'C', 'G', 'U'}
+
+
+def gc(dna: str) -> float:
+    """
+    Calculate GC% of a nucleic acid string.
+
+    :param dna: DNA sequence.
+    :return: A float representing %GC.
+    """
+    if not is_valid(dna):
+        print('Please provide only DNA/RNA (A,T,G,C,U allowed')
+
+    dna = dna.upper()
+    return (dna.count('G') + dna.count('C')) / len(dna)

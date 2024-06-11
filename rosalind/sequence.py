@@ -4,9 +4,9 @@ Utility functions to process nucleic acid sequences.
 The functions are tailored to solving Rosalind problems but can be used independently.
 
 Included functions:
-    is_valid:                   Checks if a given string is a valid nucleic acid sequence.
     reverse_complement:         Returns reverse complement of a DNA or RNA sequence.
     translate:                  Translates RNA sequence into protein using standard codon table.
+    splice_translate:           Uses multi-fasta to splice introns out of the sequence, then translates to protein.
     hamming_distance:           Calculates Hamming distance (substitution only) between two sequences of equal length.
     find_motif:                 Returns 1-based starts of all locations of a motif within given sequence (exact match).
     all_common_substrings:      Return a set of all common substrings between two DNA strings.
@@ -146,6 +146,32 @@ def translate(rna: str) -> str:
         protein += aa
     return protein
 
+
+###############################################################################################
+# Functions related to splicing
+###############################################################################################
+
+
+def splice_translate(fasta_path) -> str:
+    """
+    Given: A DNA string s (of length at most 1 kbp) and a collection of substrings of s
+    acting as introns. All strings are given in FASTA format.
+
+    Return: A protein string resulting from transcribing and translating the exons of s.
+
+    :param fasta_path: Path to fasta file where first sequence is primary transcript and the rest are introns.
+    :return: A string of translated protein.
+    """
+
+    sequences = list(read_multifasta(fasta_path).values())
+
+    # delete all introns from the first sequence
+    s = sequences[0]
+    for i in range(1, len(sequences)):
+        s = s.replace(sequences[i],'')
+
+    return translate(s)
+
 ###############################################################################################
 # Functions to compare two sequences
 ###############################################################################################
@@ -284,3 +310,4 @@ def longest_common_substring(fasta_path: str) -> str:
     substrings.sort(key=lambda x: len(x))
     # return the longest
     return substrings[-1]
+
