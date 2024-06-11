@@ -10,6 +10,9 @@ Included functions:
     find_motif:         Returns 1-based starts of all locations of a motif within given sequence (exact match).
 """
 
+# import utility functions (like reading fasta)
+from .utils import read_multifasta
+
 
 def is_valid(dna: str) -> bool:
     """
@@ -40,7 +43,7 @@ def reverse_complement(dna: str) -> str:
     # determine if RNA or DNA
     # TODO add IUPAC letters
 
-    if 'U' in dna.upper() and not 'T' in dna.upper():
+    if 'U' in dna.upper() and 'T' not in dna.upper():
         table = str.maketrans({'G': 'C', 'C': 'G', 'A': 'U', 'U': 'A', 'g': 'c', 'c': 'g', 'a': 'u', 'u': 'a'})
     else:
         table = str.maketrans(
@@ -55,7 +58,7 @@ def hamming_distance(dna1: str, dna2: str) -> int:
 
     DNA are strings of A,C,G and T. This function will in principle work on other strings as well.
 
-    The output is not case sensitive.
+    The output is not case-sensitive.
 
     :param dna1:
     :param dna2:
@@ -91,7 +94,7 @@ def find_motif(s: str, t: str) -> list[int]:
     # start with the first motif
     i = s.find(t)
     if i > 0:
-        ans.append(i + 1) #use 1-based indexing
+        ans.append(i + 1)  # use 1-based indexing
     while i < len(s):
         # jump to the mext motif
         i = s.find(t, i + 1)
@@ -102,3 +105,84 @@ def find_motif(s: str, t: str) -> list[int]:
             break
 
     return ans
+
+
+###############################################################################################
+# Functions to find common substrings
+###############################################################################################
+
+
+def all_common_substrings(seq1, seq2):
+    """
+    An auxiliary function that will find all common substrings of all lengths between the two strings/sequences.
+
+    :param seq1: First sequence.
+    :param seq2: Second sequence.
+    :return: A set of all common substrings between the two strings.
+    :return type: set[str]
+    """
+
+    # initiate answer as set to store all substrings
+    ans = set()
+
+    # go over all indices of the first string
+    for i in range(len(seq1) - 1):
+        start1 = i
+        end1 = i
+
+        # find the first match in the second string
+        start2 = seq2.find(seq1[start1])
+        end2 = start2
+
+        # check every match in second string and prolong until there is no match or end of sequence is reached
+        while 0 < end2 < len(seq2) and end1 < len(seq1):
+            # move the pointers if there is a match:
+            if seq1[end1] == seq2[end2]:
+                curr_subseq = seq1[start1:end1 + 1]
+                # add the match to the answer
+                ans.add(curr_subseq)
+                end1 += 1
+                end2 += 1
+
+            # otherwise jump to the next match:
+            else:
+                # move the start pointer to include all shorter substrings of the current match
+                for k in range(start2, end2):
+                    ans.add(seq2[k:end2 + 1])
+                # reset end of the match in the first string
+                end1 = start1
+                # jump to next match in string2 and reset end of the match in second string
+                start2 = seq2.find(seq1[i], start2 + 1)
+                end2 = start2
+    return ans
+
+
+def longest_common_substring(fasta_path: str) -> str:
+    """
+    Given: A collection of k (k≤100) DNA strings of length at most 1 kbp each in FASTA format.
+
+    Return: One longest common substring of the collection. (If multiple solutions exist, it returns only one of them.)
+
+    Note: this function uses brute-force approach and will be too slow on larger inputs.
+
+    :param fasta_path: Path to the fasta file with sequences.
+    :return: A string which is one longest common substring for all sequences.
+    """
+
+    # read input fasta into a list of sequences
+    sequences = list(read_multifasta(fasta_path).values())
+
+    # find all the common substrings of any length between the first two sequences
+    seq1 = sequences.pop()
+    seq2 = sequences.pop()
+    substrings = list(all_common_substrings(seq1, seq2))
+
+    # read more sequences until EOF and eliminate substrings which are not included in each sequence
+    for seq in sequences:
+        # only take substrings which are in sequence
+        substrings = [subs for subs in substrings if subs in seq]
+
+    # sort remaining substrings by length
+    substrings.sort(key=lambda x: len(x))
+    # return the longest
+    return substrings[-1]
