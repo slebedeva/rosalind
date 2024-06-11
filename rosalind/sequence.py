@@ -1,12 +1,13 @@
 """
-Utility functions to modify nucleic acid sequences.
+Utility functions to process nucleic acid sequences.
 
-The functions are somewhat tailored to solving Rosalind problems but can be used independently.
+The functions are tailored to solving Rosalind problems but can be used independently.
 
-Includes functions:
+Included functions:
     is_valid:           Checks if a given string is a valid nucleic acid sequence.
     reverse_complement: Returns reverse complement of a DNA or RNA sequence.
     hamming_distance:   Calculates Hamming distance (substitution only) between two sequences of equal length.
+    find_motif:         Returns 1-based starts of all locations of a motif within given sequence (exact match).
 """
 
 
@@ -72,3 +73,32 @@ def hamming_distance(dna1: str, dna2: str) -> int:
             ham_dist += 1
 
     return ham_dist
+
+
+def find_motif(s: str, t: str) -> list[int]:
+    """
+    Given two DNA strings s and t (each of length at most 1 kbp), return all locations of t as a substring of s.
+
+    :param s: Longer sequence in which to search.
+    :param t: The motif to be found.
+    :return: List of 1-based integer starts of all found motif locations.
+    """
+
+    # initiate answer
+    ans = []
+
+    # go through the string finding next motif and moving the pointer
+    # start with the first motif
+    i = s.find(t)
+    if i > 0:
+        ans.append(i + 1) #use 1-based indexing
+    while i < len(s):
+        # jump to the mext motif
+        i = s.find(t, i + 1)
+        if i > 0:
+            ans.append(i + 1)
+        # if none is found, finish
+        else:
+            break
+
+    return ans
