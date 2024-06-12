@@ -5,7 +5,7 @@ setup(
     version="1.0.0",
     author="Svetlana Lebedeva",
     description="Basic functions to work with biological sequences.",
-    long_description=open("README.md").read(),
+    long_description=open("README.rst").read(),
     url="https://github.com/slebedeva/rosalind",
     license="MIT",
     packages=find_packages(),
