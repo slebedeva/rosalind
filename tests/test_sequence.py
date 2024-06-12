@@ -3,9 +3,6 @@ from rosalind.sequence import *
 import tempfile
 
 
-
-
-
 # Tests for rosalind.sequence module
 
 class Test(TestCase):
