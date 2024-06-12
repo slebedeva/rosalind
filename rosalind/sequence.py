@@ -6,16 +6,14 @@ The functions are tailored to solving Rosalind problems but can be used independ
 Included functions:
     reverse_complement:         Returns reverse complement of a DNA or RNA sequence.
     translate:                  Translates RNA sequence into protein using standard codon table.
-    splice_translate:           Uses multi-fasta to splice introns out of the sequence, then translates to protein.
     hamming_distance:           Calculates Hamming distance (substitution only) between two sequences of equal length.
     find_motif:                 Returns 1-based starts of all locations of a motif within given sequence (exact match).
     all_common_substrings:      Return a set of all common substrings between two DNA strings.
-    longest_common_substring:   Returns one longest common substring between k DNA strings.
-
+    longest_common_substring:   Returns one longest common substring between k DNA strings given as fasta file.
 """
 
 # import utility functions (like reading fasta)
-from .utils import read_multifasta, is_valid
+from .utils import read_multifasta, is_valid ,gc
 
 
 def reverse_complement(dna: str) -> str:
@@ -152,25 +150,6 @@ def translate(rna: str) -> str:
 ###############################################################################################
 
 
-def splice_translate(fasta_path) -> str:
-    """
-    Given: A DNA string s (of length at most 1 kbp) and a collection of substrings of s
-    acting as introns. All strings are given in FASTA format.
-
-    Return: A protein string resulting from transcribing and translating the exons of s.
-
-    :param fasta_path: Path to fasta file where first sequence is primary transcript and the rest are introns.
-    :return: A string of translated protein.
-    """
-
-    sequences = list(read_multifasta(fasta_path).values())
-
-    # delete all introns from the first sequence
-    s = sequences[0]
-    for i in range(1, len(sequences)):
-        s = s.replace(sequences[i],'')
-
-    return translate(s)
 
 ###############################################################################################
 # Functions to compare two sequences
@@ -281,7 +260,7 @@ def all_common_substrings(seq1, seq2):
     return ans
 
 
-def longest_common_substring(fasta_path: str) -> str:
+def longest_common_substring(sequences: list[str]) -> str:
     """
     Given: A collection of k (k≤100) DNA strings of length at most 1 kbp each in FASTA format.
 
@@ -289,12 +268,9 @@ def longest_common_substring(fasta_path: str) -> str:
 
     Note: this function uses brute-force approach and will be too slow on larger inputs.
 
-    :param fasta_path: Path to the fasta file with sequences.
+    :param sequences: List with sequences.
     :return: A string which is one longest common substring for all sequences.
     """
-
-    # read input fasta into a list of sequences
-    sequences = list(read_multifasta(fasta_path).values())
 
     # find all the common substrings of any length between the first two sequences
     seq1 = sequences.pop()

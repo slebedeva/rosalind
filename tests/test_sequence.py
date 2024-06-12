@@ -3,15 +3,7 @@ from rosalind.sequence import *
 import tempfile
 
 
-# Create temporary file to test functions which read multifasta:
-tp = tempfile.NamedTemporaryFile()
-tp.write(b'''>Rosalind_10
-ATGGTCTACATAGCTGACAAACAGCACGTAGCAATCGGTCGAATCTCGAGAGGCATATGGTCACATGATCGGTCGAGCGTGTTTCAAAGTTTGCGCCTAG
->Rosalind_12
-ATCGGTCGAA
->Rosalind_15
-ATCGGTCGAGCGTGT''')
-tp.flush()
+
 
 
 # Tests for rosalind.sequence module
@@ -24,9 +16,6 @@ class Test(TestCase):
         self.assertEqual(translate('AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA'),
                          'MAMAPRTEINSTRING')
 
-    def test_splice_translate(self):
-        self.assertEqual(splice_translate(tp.name), 'MVYIADKQHVASREAYGHMFKVCA')
-
     def test_hamming_distance(self):
         self.assertEqual(hamming_distance('GAGCCTACTAACGGGAT', 'CATCGTAATGACGGCCT'), 7)
 
@@ -38,4 +27,6 @@ class Test(TestCase):
                          {'A', 'AC', 'C', 'CT', 'CTT', 'GA', 'T', 'TG', 'TGA', 'TT'})
 
     def test_longest_common_substring(self):
-        self.assertEqual(longest_common_substring(tp.name), 'TCGGTCGAA')
+        self.assertEqual(longest_common_substring(
+            ['ATGGTCTACATAGCTGACAAACAGCACGTAGCAATCGGTCGAATCTCGAGAGGCATATGGTCACATGATCGGTCGAGCGTGTTTCAAAGTTTGCGCCTAG',
+             'ATCGGTCGAA','ATCGGTCGAGCGTGT']), 'TCGGTCGAA')
