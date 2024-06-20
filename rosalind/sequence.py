@@ -13,7 +13,7 @@ Included functions:
 """
 
 # import utility functions (like reading fasta)
-from .utils import read_multifasta, is_valid ,gc
+from .utils import read_multifasta, is_valid, gc
 
 
 def reverse_complement(dna: str) -> str:
@@ -148,7 +148,6 @@ def translate(rna: str) -> str:
 ###############################################################################################
 # Functions related to splicing
 ###############################################################################################
-
 
 
 ###############################################################################################
@@ -287,3 +286,35 @@ def longest_common_substring(sequences: list[str]) -> str:
     # return the longest
     return substrings[-1]
 
+
+def levenshtein_distance(s, t):
+    m, n = len(s), len(t)
+
+    # make dp matrix with 1 more position accounting for empty string
+    dp = [[0 for _ in range(n + 1)] for _ in range(m + 1)]
+
+    # fill up the matrix
+    # m= rows, n = cols
+    # edge cases (one of the strings is empty):
+    for i in range(m + 1):
+        dp[i][0] = i
+    for j in range(n + 1):
+        dp[0][j] = j
+
+        # fill up the table
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            # if characters are the same, copy diagonal value (no change needed):
+            # note the 1-offset between strings and dp matrix positions
+            if s[i-1] == t[j-1]:
+                dp[i][j] = dp[i - 1][j - 1]
+            else:
+                # otherwise take minial of the three possibilities:
+                # insertion, deletion of substitution
+                insertion = dp[i][j - 1]
+                deletion = dp[i - 1][j]
+                substitution = dp[i - 1][j - 1]
+                dp[i][j] = 1 + min(insertion, deletion, substitution)
+
+    # lower right corner of the dp matrix will be the sought edit distance
+    return dp[m][n]
