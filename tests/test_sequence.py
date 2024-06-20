@@ -10,7 +10,7 @@ class Test(TestCase):
         self.assertEqual(reverse_complement('ATGC'), 'GCAT')
 
     def test_translate(self):
-        self.assertEqual(translate('AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA'),
+        self.assertEqual(translate_rna('AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA'),
                          'MAMAPRTEINSTRING')
 
     def test_hamming_distance(self):

@@ -43,7 +43,7 @@ def reverse_complement(dna: str) -> str:
     return dna[::-1].translate(table)
 
 
-def translate(rna: str) -> str:
+def translate_rna(rna: str) -> str:
     """
     Given: An RNA string s corresponding to a strand of mRNA (of length at most 10 kbp).
     If provided with DNA, it will transcribe into RNA before proceeding.
