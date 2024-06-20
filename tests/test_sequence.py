@@ -27,3 +27,6 @@ class Test(TestCase):
         self.assertEqual(longest_common_substring(
             ['ATGGTCTACATAGCTGACAAACAGCACGTAGCAATCGGTCGAATCTCGAGAGGCATATGGTCACATGATCGGTCGAGCGTGTTTCAAAGTTTGCGCCTAG',
              'ATCGGTCGAA','ATCGGTCGAGCGTGT']), 'TCGGTCGAA')
+
+    def test_levenshtein_distance(self):
+        self.assertEqual(levenshtein_distance('PLEASANTLY', 'MEANLY'), 5)
