@@ -10,6 +10,7 @@ Included functions:
     find_motif:                 Returns 1-based starts of all locations of a motif within given sequence (exact match).
     all_common_substrings:      Return a set of all common substrings between two DNA strings.
     longest_common_substring:   Returns one longest common substring between k DNA strings given as fasta file.
+    levenshtein_distance:       Returns edit distance between two strings.
 """
 
 # import utility functions (like reading fasta)
