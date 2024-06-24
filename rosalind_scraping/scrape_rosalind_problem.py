@@ -11,23 +11,25 @@ Example output:
     2. Puzzle sample input: ../puzzles/sample_data/transitions_and_transversions.txt
 """
 
-def scrape_rosalind_problem(url):
+def scrape_rosalind_problem(problem_suffix: str):
     """
     This opens a rosalind problem and creates the following template files:
     
     problem_name.py in puzzles - script to write your code into
     problem_name.txt - sample input form the description (fasta)
     
-    :param url: url address of the puzzle to be scraped 
+    :param problem_suffix: last part of url address of the puzzle to be scraped, 
+                    like "fib" in https://rosalind.info/problems/fib/
     """
     
     # get the name of the dataset
-    problem_suffix = [s for s in url.split('/') if s][-1]
+    #problem_suffix = [s for s in url.split('/') if s][-1]
     dataset_name = os.path.join('..', 'data', 'rosalind_' + problem_suffix + '.txt')
 
 
     # get the html of the page
-    response = requests.get(url)
+    base_url = "https://rosalind.info/problems/"
+    response = requests.get(base_url + problem_suffix)
     soup = BeautifulSoup(response.content, "html.parser")
     
     # problem title and file names
@@ -69,7 +71,7 @@ def scrape_rosalind_problem(url):
         f.write('if __name__=="__main__":\n')
         f.write('\ttry:\n')
         f.write('\t\tans = str(solve_'+puzzle+'("'+sample_data_path+'"))\n')
-        f.write('\t\tcorrect = '+'"'+answer.strip()+'"')
+        f.write('\t\tcorrect = '+'"'+answer.strip()+'"\n')
         f.write('\t\tassert ans == correct\n')
         f.write('\texcept AssertionError:\n')
         f.write('\t\tprint(f"{ans} is wrong")\n')
@@ -88,5 +90,5 @@ if __name__=="__main__":
     try:
         url = sys.argv[1]
         scrape_rosalind_problem(url)
-    except IndexError:
-        print("Please provide a valid url as the first argument")
+    except:
+        print("Please provide a valid Rosalind suffix (last part of problem url) as the first argument")
