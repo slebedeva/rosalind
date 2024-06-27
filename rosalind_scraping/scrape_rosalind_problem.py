@@ -76,7 +76,7 @@ def scrape_rosalind_problem(problem_suffix: str):
         f.write('\texcept AssertionError:\n')
         f.write('\t\tprint(f"{ans} is wrong")\n')
         f.write('\tprint("------rosalind problem------")\n')
-        f.write(f'\t#print(solve_{puzzle}("{dataset_name}"))')
+        f.write('\t' + f'#print(solve_{puzzle}("{dataset_name}"))')
         f.close()    
 
     # write a sample input file
